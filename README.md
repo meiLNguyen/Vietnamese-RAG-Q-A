@@ -76,7 +76,7 @@ pip install -r requirements.txt
 python scripts/fetch_corpus.py    # polite crawler (rate-limit aware, resumable)
 
 # build indexes, run eval
-jupyter lab                       # notebooks/ in order
+./start_jupyter.sh                # notebooks/ in order, kernel "Python (rag-venv)"
 ```
 
 ## Repo layout
