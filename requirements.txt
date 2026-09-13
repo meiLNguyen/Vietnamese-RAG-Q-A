@@ -1,0 +1,21 @@
+# RAG Q&A pipeline — pin exact versions AFTER first successful install
+# (repo convention: never commit unverified pins)
+
+# Retrieval
+rank_bm25            # BM25 sparse retriever
+sentence-transformers # dense embeddings (multilingual / Vietnamese models)
+underthesea          # Vietnamese word segmentation
+
+# Core
+numpy
+pandas
+requests             # HTTP with fresh CA bundle (system python certs are expired on this box)
+
+# Generation
+#   Option A: local LLM via Ollama  -> HTTP client only, no extra package
+#   Option B: hosted API            -> provider SDK
+
+# Demo / notebook
+streamlit
+jupyter
+ipykernel
