@@ -1,21 +1,25 @@
-# RAG Q&A pipeline — pin exact versions AFTER first successful install
-# (repo convention: never commit unverified pins)
+# RAG Q&A pipeline — versions verified on Windows 11 / Python 3.11.15 (2026-09-12)
+# Install: pip install -r requirements.txt
 
-# Retrieval
-rank_bm25            # BM25 sparse retriever
-sentence-transformers # dense embeddings (multilingual / Vietnamese models)
-underthesea          # Vietnamese word segmentation
+# --- Retrieval -----------------------------------------------------------------
+rank-bm25==0.2.2                 # BM25 sparse retriever
+sentence-transformers==6.0.1     # dense embeddings (pulls torch + transformers)
+underthesea==9.5.0               # Vietnamese word segmentation
 
-# Core
-numpy
-pandas
-requests             # HTTP with fresh CA bundle (system python certs are expired on this box)
+# --- Core ----------------------------------------------------------------------
+numpy==2.4.6
+pandas==3.0.5                    # qrels + eval tables
+requests==2.34.2                 # corpus fetcher (fresh CA bundle — the system
+                                 # pythons on this machine ship expired certs)
 
-# Generation
-#   Option A: local LLM via Ollama  -> HTTP client only, no extra package
-#   Option B: hosted API            -> provider SDK
+# --- Notebook / demo -----------------------------------------------------------
+jupyter==1.1.1
+jupyterlab==4.6.3
+ipykernel==7.3.0
+streamlit==1.63.0                # demo app
 
-# Demo / notebook
-streamlit
-jupyter
-ipykernel
+# --- Pinned transitively (do not bump without re-running the eval) -------------
+torch==2.14.0                    # CPU build; a CUDA build is only needed to speed up embedding
+transformers==5.17.0
+tokenizers==0.23.2
+scikit-learn==1.9.1

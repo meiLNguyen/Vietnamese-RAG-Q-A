@@ -13,6 +13,8 @@ data/raw/*
 data/processed/*
 !data/raw/.gitkeep
 !data/processed/.gitkeep
+# keep the curation report: it documents the data decisions (small, auditable)
+!data/processed/curation_report.json
 indexes/
 *.faiss
 *.pkl

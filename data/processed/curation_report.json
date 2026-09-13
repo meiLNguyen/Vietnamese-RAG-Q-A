@@ -1,0 +1,12 @@
+{
+ "generated_at": "2026-09-13T04:27:11+00:00",
+ "source": "vi.wikipedia.org (CC BY-SA 4.0)",
+ "raw_documents": 447,
+ "seed_category_documents": 204,
+ "dropped_off_topic": 245,
+ "dropped_too_short": 20,
+ "dropped_blocklist": 3,
+ "curated_documents": 179,
+ "curated_chars": 2472030,
+ "min_chars": 1000
+}
