@@ -1,1 +1,13 @@
 query_id,query,doc_id,relevance,query_class
+q001,Học không có giám sát là gì?,24345,2,literal
+q001,Học không có giám sát là gì?,19893713,1,literal
+q001,Học không có giám sát là gì?,20012838,0,literal
+q002,Phân loại nhị phân là gì?,30712,2,literal
+q002,Phân loại nhị phân là gì?,20023680,1,literal
+q002,Phân loại nhị phân là gì?,19893713,0,literal
+q003,Phân loại nhị phân là gì?,19917007,2,literal
+q003,Phân loại nhị phân là gì?,19989487,0,literal
+q003,Phân loại nhị phân là gì?,25735,0,literal
+q004,Hoc may luong tu la gi?,20015836,2,literal
+q004,Hoc may luong tu la gi?,19950271,0,literal
+q004,Hoc may luong tu la gi?,25735,0,literal
