@@ -5,9 +5,28 @@ q001,Học không có giám sát là gì?,20012838,0,literal
 q002,Phân loại nhị phân là gì?,30712,2,literal
 q002,Phân loại nhị phân là gì?,20023680,1,literal
 q002,Phân loại nhị phân là gì?,19893713,0,literal
-q003,Phân loại nhị phân là gì?,19917007,2,literal
-q003,Phân loại nhị phân là gì?,19989487,0,literal
-q003,Phân loại nhị phân là gì?,25735,0,literal
-q004,Hoc may luong tu la gi?,20015836,2,literal
-q004,Hoc may luong tu la gi?,19950271,0,literal
-q004,Hoc may luong tu la gi?,25735,0,literal
+q003,Chưng cất tri thức là gì?,19917007,2,literal
+q003,Chưng cất tri thức là gì?,19989487,0,literal
+q003,Chưng cất tri thức là gì?,25735,0,literal
+q004,Học máy lượng tử là gì?,20015836,2,literal
+q004,Học máy lượng tử là gì?,19950271,0,literal
+q004,Học máy lượng tử là gì?,25735,0,literal
+q005,Vì sao mô hình đạt kết quả rất tốt trên dữ liệu huấn luyện nhưng lại kém khi gặp dữ liệu mới?,16665860,2,paraphrase
+q005,Vì sao mô hình đạt kết quả rất tốt trên dữ liệu huấn luyện nhưng lại kém khi gặp dữ liệu mới?,24278,1,paraphrase
+q005,Vì sao mô hình đạt kết quả rất tốt trên dữ liệu huấn luyện nhưng lại kém khi gặp dữ liệu mới?,19859769,0,paraphrase
+q006,"Khi huấn luyện mạng nơ-ron nhiều tầng, vì sao tín hiệu học tập yếu dần khi lan về các tầng đầu?",19994276,2,paraphrase
+q007,"Cách dạy máy tính học bằng thử và sai, làm đúng thì được thưởng, gọi là gì?",70840,2,paraphrase
+q007,"Cách dạy máy tính học bằng thử và sai, làm đúng thì được thưởng, gọi là gì?",20002585,1,paraphrase
+q008,"Loại mô hình nào được huấn luyện trên lượng văn bản khổng lồ và có thể viết, trả lời như con người?",19859769,2,paraphrase
+q008,"Loại mô hình nào được huấn luyện trên lượng văn bản khổng lồ và có thể viết, trả lời như con người?",20032141,1,paraphrase
+q009,So sánh học có giám sát và học không có giám sát,24329,2,multi-doc
+q009,So sánh học có giám sát và học không có giám sát,24345,2,multi-doc
+q009,So sánh học có giám sát và học không có giám sát,818866,1,multi-doc
+q010,So sánh phân loại nhị phân và phân loại đa lớp,30712,2,multi-doc
+q010,So sánh phân loại nhị phân và phân loại đa lớp,20023680,2,multi-doc
+q011,So sánh dịch máy thống kê và dịch máy dựa trên ví dụ,587939,2,multi-doc
+q011,So sánh dịch máy thống kê và dịch máy dựa trên ví dụ,19654315,2,multi-doc
+q011,So sánh dịch máy thống kê và dịch máy dựa trên ví dụ,298416,1,multi-doc
+q012,So sánh mạng nơ-ron tích chập và mạng nơ-ron hồi quy,19518175,2,multi-doc
+q012,So sánh mạng nơ-ron tích chập và mạng nơ-ron hồi quy,19517819,2,multi-doc
+q012,So sánh mạng nơ-ron tích chập và mạng nơ-ron hồi quy,3339820,1,multi-doc

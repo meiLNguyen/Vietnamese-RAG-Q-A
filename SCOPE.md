@@ -38,6 +38,9 @@ Rejected alternatives:
 Written before the pipeline, so improvements are measurable.
 
 - **Queries:** 40–50 Vietnamese questions, written from the corpus (not from memory).
+  **Batch 1 done:** 12 queries / 31 judgments — 4 literal, 4 paraphrase, 4 multi-doc.
+  Validated automatically by `scripts/validate_qrels.py` (missing grade-2, reused query
+  text, unknown doc ids, duplicate pairs, class coverage).
 - **Graded relevance:** 0 = irrelevant, 1 = related/partial, 2 = contains the answer.
 - **qrels.csv columns:** `query_id, query, doc_id, relevance` — one row per judged pair.
 - **Query mix:** literal (term overlap), paraphrased (no term overlap), and multi-document
@@ -67,7 +70,7 @@ Written before the pipeline, so improvements are measurable.
 | # | Milestone | Definition of done |
 |---|---|---|
 | M3.1 | Corpus locked | crawler run completes, N articles on disk, README states source + license |
-| M3.2 | qrels written | 40+ judged queries, relevance graded, query classes labelled |
+| M3.2 | qrels written | 40+ judged queries, relevance graded, query classes labelled (**batch 1: 12 queries ✅**) |
 | M3.3 | BM25 baseline | eval table row filled with real numbers |
 | M3.4 | Dense + hybrid | measured deltas vs BM25, best variant justified |
 | M3.5 | Generator + demo | answers with citations, 15-query hand-judged generation table |
