@@ -71,7 +71,7 @@ Written before the pipeline, so improvements are measurable.
 |---|---|---|
 | M3.1 | Corpus locked | crawler run completes, N articles on disk, README states source + license |
 | M3.2 | qrels written | 40+ judged queries, relevance graded, query classes labelled (**batch 1: 12 queries ✅**) |
-| M3.3 | BM25 baseline | eval table row filled with real numbers |
+| M3.3 | BM25 baseline | ✅ done — Recall@10 0.875 · MRR 0.718 · nDCG@10 0.680 (random baseline MRR 0.010) |
 | M3.4 | Dense + hybrid | measured deltas vs BM25, best variant justified |
 | M3.5 | Generator + demo | answers with citations, 15-query hand-judged generation table |
 | M3.6 | README + push | results table complete, no `?` left, repo public |

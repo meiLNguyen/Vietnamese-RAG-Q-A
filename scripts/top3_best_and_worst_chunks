@@ -1,0 +1,8 @@
+import json, statistics
+from chunk_corpus import single_char_ratio
+
+chunks = [json.loads(l) for l in open("data/processed/chunks.jsonl", encoding="utf-8")]
+ratios = sorted(single_char_ratio(c["text"]) for c in chunks)
+print(f"Top 3 worst chunks: {ratios[-3:]}")
+print(f"Top 3 best chunks: {ratios[:3]}")
+

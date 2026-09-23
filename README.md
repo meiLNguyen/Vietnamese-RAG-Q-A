@@ -25,13 +25,28 @@ dense, hybrid fusion — is justified by a measured delta in MRR / nDCG@k, not b
 
 *Filled in as stages land — real numbers only, never estimates.*
 
-### Retrieval (queries = ?, k = ?)
+### Retrieval — 12 queries, k=10, 50 chunks retrieved per query
+*(chunk hits aggregated to documents by max chunk score)*
 
-| Retriever | Recall@k | Precision@k | MRR | nDCG@k | Latency (ms/query) |
+| Retriever | Recall@10 | Precision@10 | MRR | nDCG@10 | Latency/query |
 |---|---|---|---|---|---|
-| BM25 | ? | ? | ? | ? | ? |
+| Random (baseline) | 0.042 | 0.008 | 0.010 | 0.010 | — |
+| **BM25** | **0.875** | **0.183** | **0.718** | **0.680** | 9 ms |
 | Dense | ? | ? | ? | ? | ? |
 | Hybrid | ? | ? | ? | ? | ? |
+
+**BM25 by query class** — why the qrels set contains three kinds of question:
+
+| Query class | Recall@10 | Precision@10 | MRR | nDCG@10 |
+|---|---|---|---|---|
+| literal (shares terms with the document) | 1.000 | 0.150 | 0.875 | 0.882 |
+| multi-document | 1.000 | 0.275 | 0.750 | 0.758 |
+| **paraphrase (no term overlap)** | **0.625** | 0.125 | **0.528** | **0.398** |
+
+BM25 scores 70× the random baseline on MRR and is near-perfect on literal queries — but loses
+roughly half its ranking quality as soon as the question is phrased differently from the text,
+and one paraphrased query (q006) fails outright: **0 of its gold documents retrieved**, even with
+50 chunks retrieved per query. Closing that gap is the hypothesis the rest of this project tests.
 
 ### Generation (subset of queries, judged manually)
 
