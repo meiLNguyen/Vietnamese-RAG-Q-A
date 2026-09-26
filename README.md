@@ -9,17 +9,19 @@ dense, hybrid fusion — is justified by a measured delta in MRR / nDCG@k, not b
 
 ## Status
 
+![Demo: asking a question, getting a cited answer](docs/demo.png)
+
 | Stage | State |
 |---|---|
-| Corpus acquisition | 🚧 in progress |
-| Chunking | ⬜ |
-| BM25 baseline | ⬜ |
-| Dense retrieval | ⬜ |
-| Hybrid (BM25 + dense) | ⬜ |
-| Reranker | ⬜ (optional) |
-| Generator + citations | ⬜ |
-| Eval harness (qrels → MRR / nDCG@k) | ⬜ |
-| Demo app | ⬜ |
+| Corpus acquisition | ✅ 447 crawled → **179 curated** articles |
+| Chunking | ✅ **4,133** chunks · 553 chars avg · 2.0% filtered as junk |
+| BM25 baseline | ✅ Recall@10 0.875 · MRR 0.718 · nDCG@10 0.680 |
+| Dense retrieval | ✅ Recall@10 0.819 · MRR 0.621 · nDCG@10 0.613 |
+| Hybrid (BM25 + dense) | ✅ Recall@10 **0.958** · MRR **0.817** · nDCG@10 **0.763** |
+| Reranker | ⬜ next measured step (context selection, not ranking, is the current bottleneck) |
+| Generator + citations | ✅ local `qwen2.5:3b` — 10/12 answered · 0 invalid citations · 9/12 cited a gold doc |
+| Eval harness (qrels → MRR / nDCG@k) | ✅ 12 queries · 31 graded judgments · query-class breakdown |
+| Demo app | ✅ `streamlit run app.py` |
 
 ## Results
 
@@ -139,7 +141,19 @@ python scripts/fetch_corpus.py    # polite crawler (rate-limit aware, resumable)
 
 # build indexes, run eval
 ./start_jupyter.sh                # notebooks/ in order, kernel "Python (rag-venv)"
+
+# ask questions (local LLM through Ollama — no API key)
+ollama pull qwen2.5:3b
+ollama serve
+streamlit run app.py              # demo UI → http://localhost:8501
 ```
+
+### Demo
+
+`streamlit run app.py` opens an interactive UI over the same `scripts/retrieval.py` and
+`scripts/rag_qa.py` the evaluation uses — five example questions (in-corpus, paraphrased, and
+one deliberately outside the corpus), the answer with its citation markers, the citation audit,
+and every passage that was put in front of the model with a link to its source article.
 
 ## Repo layout
 
