@@ -26,35 +26,82 @@ dense, hybrid fusion — is justified by a measured delta in MRR / nDCG@k, not b
 *Filled in as stages land — real numbers only, never estimates.*
 
 ### Retrieval — 12 queries, k=10, 50 chunks retrieved per query
-*(chunk hits aggregated to documents by max chunk score)*
+*(chunk hits aggregated to documents by max chunk score; identical qrels for every variant)*
 
 | Retriever | Recall@10 | Precision@10 | MRR | nDCG@10 | Latency/query |
 |---|---|---|---|---|---|
 | Random (baseline) | 0.042 | 0.008 | 0.010 | 0.010 | — |
-| **BM25** | **0.875** | **0.183** | **0.718** | **0.680** | 9 ms |
-| Dense | ? | ? | ? | ? | ? |
-| Hybrid | ? | ? | ? | ? | ? |
+| BM25 | 0.875 | 0.183 | 0.718 | 0.680 | 9 ms |
+| Dense — `paraphrase-multilingual-MiniLM-L12-v2` | 0.819 | 0.167 | 0.621 | 0.613 | 20 ms |
+| **Hybrid — BM25 + dense, RRF fusion** | **0.958** | **0.192** | **0.817** | **0.763** | ~29 ms |
 
-**BM25 by query class** — why the qrels set contains three kinds of question:
+**By query class** — the qrels set deliberately mixes three kinds of question:
 
-| Query class | Recall@10 | Precision@10 | MRR | nDCG@10 |
+| Query class | BM25 nDCG@10 | Dense nDCG@10 | Hybrid nDCG@10 |
+|---|---|---|---|
+| literal (shares terms with the text) | 0.882 | 0.738 | 0.821 |
+| multi-document | 0.758 | 0.668 | **0.877** |
+| **paraphrase (no term overlap)** | 0.398 | 0.432 | **0.591** |
+
+Rank fusion beats the best single retriever by **12% relative on nDCG@10** (0.763 vs 0.680),
+and lifts the hardest query class by **48%** (paraphrase nDCG 0.398 → 0.591).
+
+**Two symmetric failure case studies** — the reason fusion works on this corpus:
+
+| Query | BM25 | Dense | Hybrid | What it demonstrates |
 |---|---|---|---|---|
-| literal (shares terms with the document) | 1.000 | 0.150 | 0.875 | 0.882 |
-| multi-document | 1.000 | 0.275 | 0.750 | 0.758 |
-| **paraphrase (no term overlap)** | **0.625** | 0.125 | **0.528** | **0.398** |
+| q006 *"Khi huấn luyện mạng nơ-ron nhiều tầng, vì sao tín hiệu học tập yếu dần…"* | recall **0.0** | recall **1.0** | recall 1.0 | lexical matching is blind to a question sharing no terms with the answer |
+| q003 *"Chưng cất tri thức là gì?"* | recall **1.0** (rank 1) | recall **0.0** | recall 1.0 | dense embeddings drop rare technical terms that exact matching never misses |
 
-BM25 scores 70× the random baseline on MRR and is near-perfect on literal queries — but loses
-roughly half its ranking quality as soon as the question is phrased differently from the text,
-and one paraphrased query (q006) fails outright: **0 of its gold documents retrieved**, even with
-50 chunks retrieved per query. Closing that gap is the hypothesis the rest of this project tests.
+Each retriever fails exactly where the other succeeds, so fusing their **ranks** — RRF, which
+needs no score normalisation between BM25 scores and cosine similarities — recovers both.
 
-### Generation (subset of queries, judged manually)
+**Hyperparameter note (honest):** RRF's constant `K` was measured at 10 / 30 / 60 / 100. K=10
+scored marginally better (nDCG 0.770 vs 0.763) but the standard K=60 is reported: 12 queries are
+far too few to justify tuning on. The qrels set needs expanding before any weight tuning is
+trustworthy — see [SCOPE.md](SCOPE.md).
 
-| Metric | Score |
-|---|---|
-| Faithfulness (claims grounded in retrieved context) | ? |
-| Answer relevance | ? |
-| Citation accuracy | ? |
+### Generation — `qwen2.5:3b` running locally through Ollama, same 12 queries
+
+The generator may only use the retrieved passages, every claim must carry a passage number,
+and it must refuse when the passages do not contain the answer (a confident hallucination is
+worse than an honest "I don't know").
+
+| Context size | Answered | Invalid citations | Gold doc in context | **Cited a gold doc** |
+|---|---|---|---|---|
+| **5 passages** | 10/12 | 0/12 | 11/12 | **9/12** |
+| 10 passages | 11/12 | 0/12 | 12/12 | 6/12 |
+
+More context did **not** mean more faithful answers: at 10 passages the model answers one more
+question but cites the wrong passage in three more. The cap is therefore 5 passages, chosen by
+measurement rather than by taste. *("Cited a gold doc" is an automatic proxy; it undercounts
+answers that are correct but cite a different passage covering the same topic — q007 answers
+"học tăng cường" correctly while citing a glossary entry instead of the dedicated article.)*
+
+### What retrieval metrics hid
+
+**q006** — *"Khi huấn luyện mạng nơ-ron nhiều tầng, vì sao tín hiệu học tập yếu dần khi lan về
+các tầng đầu?"* — has **recall@10 = 1.0**: the gold article is retrieved, at rank 6–8. The
+generator still refuses to answer it. Feeding the model that article's passages *alone* produces
+a correct, cited answer, so the generator was never the problem. Three separate effects were
+measured on the way to that conclusion:
+
+1. **RRF rewards consensus.** A passage only one retriever finds is outranked by documents both
+   retrievers half-agree on — even when that one retriever ranks it first. For **q003**
+   ("Chưng cất tri thức là gì?") the correct article is BM25's #1 hit yet fell outside the fused
+   top 5; the generator saw only unrelated articles and (correctly) refused. The context builder
+   now always admits each retriever's top-2 documents.
+2. **The most similar passage is not the passage with the answer.** Inside q006's gold article,
+   the highest-scoring chunk is its *history* section; the chunk explaining the mechanism scores
+   lower. Passing a document's first chunks instead of its best-matching chunks showed the same
+   effect from the other side.
+3. **A metric measured at k=10 is not the system.** The generator was initially handed 6
+   passages covering ~3 documents — documents the reported recall@10 counted as retrieved were
+   never seen by the model.
+
+None of this is visible in Recall / Precision / MRR / nDCG. The retrieval table says 0.958; the
+end-to-end system answers 10 of 12 questions with a valid citation. Both numbers belong here,
+and the gap between them is the most useful thing this project measured.
 
 ## Architecture
 
@@ -102,7 +149,14 @@ rag-qa-vietnamese/
 ├── data/raw/             # fetched documents (not tracked)
 ├── data/processed/       # chunks (not tracked)
 ├── scripts/
-│   └── fetch_corpus.py   # rate-limit-aware, resumable fetcher
+│   ├── fetch_corpus.py     # rate-limit-aware, resumable fetcher
+│   ├── curate_corpus.py    # off-topic/stub filtering + audit report
+│   ├── chunk_corpus.py     # sentence-aware chunker + quality filter
+│   ├── explore.py          # Vietnamese tokenizer, IDF stats
+│   ├── validate_qrels.py   # qrels sanity checks
+│   ├── build_embeddings.py # dense index (HF cache redirected to D:)
+│   ├── retrieval.py        # BM25 + dense + RRF — shared by eval and demo
+│   └── rag_qa.py           # retrieval -> prompt -> local LLM -> answer + citations
 ├── eval/
 │   └── qrels.csv         # ground-truth query set (written BEFORE the pipeline)
 ├── notebooks/            # chunking, retrieval, eval
@@ -111,5 +165,27 @@ rag-qa-vietnamese/
 
 ## Data & license
 
-*Source and license to be confirmed once the corpus decision is locked — the README must
-state the source, license, and how to reproduce the fetch.*
+Corpus: **179 Vietnamese Wikipedia articles** on AI/ML, fetched from `vi.wikipedia.org`
+(Category tree rooted at *Trí tuệ nhân tạo*), 447 raw articles crawled and curated down to 179.
+
+- **License:** text is CC BY-SA 4.0; every document keeps its `pageid`, `revid`, source URL and
+  fetch timestamp in `data/raw/_catalog.json` for attribution and reproducibility.
+- **Crawler:** throttled to 1.5 s/request with `Retry-After` backoff — the API rate-limited this
+  project once (HTTP 429) during probing, and a polite crawler is the fix.
+- **Curated, not scraped blindly:** 245 off-topic and 20 stub articles were dropped by
+  `scripts/curate_corpus.py`, with `data/processed/curation_report.json` recording every decision.
+
+## Generation (local LLM)
+
+Answers are generated by a **local** model through [Ollama](https://ollama.com) — no API key,
+no data leaving the machine.
+
+```bash
+ollama pull qwen2.5:3b          # ~1.9 GB
+ollama serve                    # models are stored on D: (OLLAMA_MODELS)
+
+python scripts/rag_qa.py "Chưng cất tri thức là gì?"
+python scripts/rag_qa.py --verbose "So sánh học có giám sát và học không có giám sát"
+```
+
+To use a different model: `python scripts/rag_qa.py --model qwen2.5:7b "..."`.

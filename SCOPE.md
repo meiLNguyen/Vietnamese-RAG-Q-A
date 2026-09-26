@@ -72,9 +72,10 @@ Written before the pipeline, so improvements are measurable.
 | M3.1 | Corpus locked | crawler run completes, N articles on disk, README states source + license |
 | M3.2 | qrels written | 40+ judged queries, relevance graded, query classes labelled (**batch 1: 12 queries ✅**) |
 | M3.3 | BM25 baseline | ✅ done — Recall@10 0.875 · MRR 0.718 · nDCG@10 0.680 (random baseline MRR 0.010) |
-| M3.4 | Dense + hybrid | measured deltas vs BM25, best variant justified |
-| M3.5 | Generator + demo | answers with citations, 15-query hand-judged generation table |
-| M3.6 | README + push | results table complete, no `?` left, repo public |
+| M3.4 | Dense + hybrid | ✅ done — BM25 nDCG 0.680 · dense 0.613 · **hybrid RRF 0.763** (+12% rel.) |
+| M3.5 | Generator + citations | ✅ local qwen2.5:3b via Ollama — 10/12 answered · 0 invalid citations · 9/12 cited a gold doc (k=5, measured vs k=10: 6/12) |
+| M3.6 | Demo app | Streamlit UI over the same `retrieval.py` (query → answer + sources) |
+| M3.7 | README + push | results table complete, no `?` left, repo public |
 
 ## 6. Risks
 
