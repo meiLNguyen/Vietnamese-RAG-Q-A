@@ -9,7 +9,7 @@ Root = Path(__file__).resolve().parents[1]
 CURATED = Root / "data" / "processed" / "curated.jsonl"
 CHUNKS = Root / "data" / "processed" / "chunks.jsonl"
 
-CHUNK_SIZE = 600     # ký tự mỗi chunk — sẽ đo lại sau, đừng tối ưu vội
+CHUNK_SIZE = 600     # characters per chunk, chosen from the measured size distribution
 OVERLAP = 80         # ký tự gối nhau giữa 2 chunk liền kề
 MIN_CHARS = 100      # chunk ngắn hơn mức này thì bỏ (rác)
 THRESHOLD = 0.4       # tỉ lệ token 1 ký tự > mức này thì coi là rác
